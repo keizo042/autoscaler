@@ -18,11 +18,13 @@
 // Service Accounts
 
 resource "google_service_account" "poller_sa" {
+  project      = var.project_id
   account_id   = "poller-sa"
   display_name = "Autoscaler - Metrics Poller Service Account"
 }
 
 resource "google_service_account" "scaler_sa" {
+  project      = var.project_id
   account_id   = "scaler-sa"
   display_name = "Autoscaler - Scaler Function Service Account"
 }

@@ -18,6 +18,7 @@
 // Service Accounts
 
 resource "google_service_account" "forwarder_sa" {
+  project      = var.project_id
   account_id   = "forwarder-sa"
   display_name = "Autoscaler - PubSub Forwarder Service Account"
 }
@@ -25,7 +26,8 @@ resource "google_service_account" "forwarder_sa" {
 // PubSub
 
 resource "google_pubsub_topic" "forwarder_topic" {
-  name = "forwarder-topic"
+  project = var.project_id
+  name    = "forwarder-topic"
 }
 
 resource "google_pubsub_topic_iam_member" "forwader_pubsub_sub_binding" {
@@ -38,6 +40,7 @@ resource "google_pubsub_topic_iam_member" "forwader_pubsub_sub_binding" {
 // Cloud Functions
 
 resource "google_storage_bucket" "bucket_gcf_source" {
+  project                     = var.project_id
   name                        = "${var.project_id}-gcf-source"
   storage_class               = "REGIONAL"
   location                    = var.region
@@ -65,6 +68,7 @@ resource "google_cloudfunctions_function" "forwarder_function" {
   available_memory_mb = "256"
   entry_point         = "forwardFromPubSub"
   runtime             = "nodejs10"
+  max_instances       = 3000
   event_trigger {
     event_type = "google.pubsub.topic.publish"
     resource   = google_pubsub_topic.forwarder_topic.id
